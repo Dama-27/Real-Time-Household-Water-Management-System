@@ -11,7 +11,7 @@ The Real-Time Household Water Management System is an embedded IoT project desig
 - Physical Shutdown Switch: Ensures safety in critical situations.
 - Energy-efficient and cost-effective design.
 ## Circuit Diagram
-![Circuit Diagram](link_to_circuit_diagram)  
+![image alt](https://github.com/Dama-27/Real-Time-Household-Water-Management-System/blob/main/images/circuit%20diagram1.png?raw=true)  
 ---
 
 ## Budget
