@@ -1,0 +1,127 @@
+@font-face {
+    font-family: TitleFont;
+    src: url("./src/fonys/OFL.txt")
+}
+
+
+/* General Styles */
+
+body {
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(to right, #bac7ed, #231c91);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+
+/* Main Container */
+
+.main-container {
+    text-align: center;
+    padding: 20px;
+    color: white;
+}
+
+
+/* Header */
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.header h1 {
+    font-family: TitleFont;
+    font-size: 50px;
+}
+
+.logo {
+    width: 100px;
+    height: 100px;
+}
+
+
+/* Grid Layout */
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+
+/* Card Styling */
+
+.card {
+    padding: 20px;
+    text-align: center;
+    color: black;
+}
+
+.card h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #242121;
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 16px;
+    color: #d5cdcd;
+    margin: 5px 0;
+}
+
+.card-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.water-parameters {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.motor-image {
+    width: 320px;
+    height: 320px;
+    margin-top: 20px;
+}
+
+.solenoid-image {
+    width: 200px;
+    height: 200px;
+    margin-top: 20px;
+}
+
+
+/* Button */
+
+.button {
+    padding: 10px 20px;
+    background: #ff5722;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.button:hover {
+    background: #e64a19;
+}
