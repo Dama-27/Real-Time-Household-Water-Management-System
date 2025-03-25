@@ -4,6 +4,7 @@ import logo from "./assets/logo.png";
 import waterImage from "./assets/water.jpg";
 import solenoidImage from "./assets/valve.jpg";
 import pumpImage from "./assets/water pump.png";
+//import "./ToggleButton.css"; // Import the toggle button CSS
 
 const WaterManagement = () => {
   const [temperature, setTemperature] = useState(25);
@@ -19,6 +20,7 @@ const WaterManagement = () => {
   const [outflowData, setOutflowData] = useState([]);
   const [inSolenoidOn, setInSolenoidOn] = useState(false);
   const [outSolenoidOn, setOutSolenoidOn] = useState(false);
+  const [toggleMessage, setToggleMessage] = useState("");
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -41,6 +43,11 @@ const WaterManagement = () => {
 
   const handleOutSolenoidSwitch = () => {
     setOutSolenoidOn(!outSolenoidOn);
+  };
+
+  const handleToggle = () => {
+    const newMessage = toggleMessage === "Water Connection" ? "Motor Line" : "Water Connection";
+    setToggleMessage(newMessage);
   };
 
   return (
@@ -66,11 +73,24 @@ const WaterManagement = () => {
 
         {/* Motor Control */}
         <div className="card motor-control">
-          <h2>Motor Control</h2>
-          <p>Status: {motorOn ? "ON" : "OFF"}</p>
-          <button className="button" onClick={handleMotorSwitch}>
-            {motorOn ? "Turn Off" : "Turn On"}
-          </button>
+          <div className="control-button">
+              <h2>Motor Control</h2>
+              <p>Status: {motorOn ? "ON" : "OFF"}</p>
+              <button className="button" onClick={handleMotorSwitch}>
+                {motorOn ? "Turn Off" : "Turn On"}
+              </button>
+            
+            {/* Toggle Button */}
+            
+              <h2>Feature Control</h2>
+                <p>Feature Toggle:</p>
+                <div className="toggle-switch" onClick={handleToggle}>
+                  <div className={`toggle-thumb ${toggleMessage === "Water Connection" ? "on" : ""}`} />
+                </div>
+                <span className="toggle-message">{toggleMessage}</span>
+              
+          </div>
+          
           <div></div>
           <img src={pumpImage} alt="Motor" className="card-image motor-image" />
         </div>
@@ -88,6 +108,10 @@ const WaterManagement = () => {
           </button>
           <div></div>
           <img src={solenoidImage} alt="Solenoid Valve" className="card-image solenoid-image" />
+        </div>
+
+        <div>
+          {/*add somthig this div use for chart arrangement*/}
         </div>
 
         {/* Charts */}

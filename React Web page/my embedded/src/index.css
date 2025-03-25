@@ -125,3 +125,54 @@ body {
 .button:hover {
     background: #e64a19;
 }
+
+.control-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Toggle switch container */
+
+.toggle-switch {
+    width: 60px;
+    height: 30px;
+    background: #ccc;
+    border-radius: 15px;
+    position: relative;
+    cursor: pointer;
+    margin: 10px 0;
+}
+
+
+/* Toggle thumb */
+
+.toggle-thumb {
+    width: 26px;
+    height: 26px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    transform: translateY(-50%);
+    transition: left 0.2s;
+}
+
+
+/* Active state */
+
+.toggle-thumb.on {
+    left: 32px;
+}
+
+
+/* Toggle message */
+
+.toggle-message {
+    margin-top: 5px;
+    font-size: 16px;
+    color: #d5cdcd;
+}
