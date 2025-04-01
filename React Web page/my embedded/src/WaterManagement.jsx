@@ -4,7 +4,25 @@ import logo from "./assets/logo.png";
 import waterImage from "./assets/water.jpg";
 import solenoidImage from "./assets/valve.jpg";
 import pumpImage from "./assets/water pump.png";
-//import "./ToggleButton.css"; // Import the toggle button CSS
+
+// Firebase connection
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, onValue, set } from "firebase/database";
+
+// Firebase Configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyD-DoytcfFd_NdvcpyppC1cb3biFM1-kVE",
+  authDomain: "smart-house-water-management.firebaseapp.com",
+  databaseURL: "https://smart-house-water-management-default-rtdb.firebaseio.com",
+  projectId: "smart-house-water-management",
+  storageBucket: "smart-house-water-management.appspot.com",
+  messagingSenderId: "373754444462",
+  appId: "1:373754444462:web:124a34cf2711d06c790b3f",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const realtimeDB = getDatabase(app); // Realtime Database
 
 const WaterManagement = () => {
   const [temperature, setTemperature] = useState(25);
@@ -22,6 +40,78 @@ const WaterManagement = () => {
   const [outSolenoidOn, setOutSolenoidOn] = useState(false);
   const [toggleMessage, setToggleMessage] = useState("");
 
+  // Fetch data from Firebase Realtime Database
+  useEffect(() => {
+    const temperatureRef = ref(realtimeDB, "Tempurature");
+    const tdsRef = ref(realtimeDB, "TDS");
+    const waterQualityRef = ref(realtimeDB, "WaterQuality");
+    const waterLevelRef = ref(realtimeDB, "WaterLevel");
+    const inflowRateRef = ref(realtimeDB, "Inflow");
+    const outflowRateRef = ref(realtimeDB, "Outflow");
+
+    const unsubscribeTemperature = onValue(temperatureRef, (snapshot) => {
+      setTemperature(snapshot.val());
+    });
+
+    const unsubscribeTds = onValue(tdsRef, (snapshot) => {
+      setTds(snapshot.val());
+    });
+
+    const unsubscribeWaterQuality = onValue(waterQualityRef, (snapshot) => {
+      setWaterQuality(snapshot.val());
+    });
+
+    const unsubscribeWaterLevel = onValue(waterLevelRef, (snapshot) => {
+      setWaterLevel(snapshot.val());
+    });
+
+    const unsubscribeInflowRate = onValue(inflowRateRef, (snapshot) => {
+      setInflowRate(snapshot.val());
+    });
+
+    const unsubscribeOutflowRate = onValue(outflowRateRef, (snapshot) => {
+      setOutflowRate(snapshot.val());
+    });
+
+    return () => {
+      unsubscribeTemperature();
+      unsubscribeTds();
+      unsubscribeWaterQuality();
+      unsubscribeWaterLevel();
+      unsubscribeInflowRate();
+      unsubscribeOutflowRate();
+    };
+  }, []);
+
+  // Update motorOn state in Firebase
+  const handleMotorSwitch = () => {
+    const newMotorState = !motorOn;
+    setMotorOn(newMotorState);
+    set(ref(realtimeDB, "MotorSwich"), newMotorState);
+  };
+
+  // Update inSolenoidOn state in Firebase
+  const handleInSolenoidSwitch = () => {
+    const newInSolenoidState = !inSolenoidOn;
+    setInSolenoidOn(newInSolenoidState);
+    set(ref(realtimeDB, "InValve"), newInSolenoidState);
+  };
+
+  // Update outSolenoidOn state in Firebase
+  const handleOutSolenoidSwitch = () => {
+    const newOutSolenoidState = !outSolenoidOn;
+    setOutSolenoidOn(newOutSolenoidState);
+    set(ref(realtimeDB, "OutValve"), newOutSolenoidState);
+  };
+
+  // Toggle feature control
+  const handleToggle = () => {
+    const newMessage = toggleMessage === "Water Connection" ? "Motor Line" : "Water Connection";
+    setToggleMessage(newMessage);
+    set(ref(realtimeDB, "toggleState"), newMessage);
+  };
+
+  // Log data every 5 seconds for charts
   useEffect(() => {
     const interval = setInterval(() => {
       const time = new Date().toLocaleTimeString();
@@ -33,26 +123,9 @@ const WaterManagement = () => {
     return () => clearInterval(interval);
   }, [temperature, waterLevel, inflowRate, outflowRate]);
 
-  const handleMotorSwitch = () => {
-    setMotorOn(!motorOn);
-  };
-
-  const handleInSolenoidSwitch = () => {
-    setInSolenoidOn(!inSolenoidOn);
-  };
-
-  const handleOutSolenoidSwitch = () => {
-    setOutSolenoidOn(!outSolenoidOn);
-  };
-
-  const handleToggle = () => {
-    const newMessage = toggleMessage === "Water Connection" ? "Motor Line" : "Water Connection";
-    setToggleMessage(newMessage);
-  };
-
   return (
     <div className="main-container">
-      {/* Header*/}
+      {/* Header */}
       <header className="header">
         <img src={logo} alt="System Logo" className="logo" />
         <h1>Smart Water Management System</h1>
@@ -74,24 +147,20 @@ const WaterManagement = () => {
         {/* Motor Control */}
         <div className="card motor-control">
           <div className="control-button">
-              <h2>Motor Control</h2>
-              <p>Status: {motorOn ? "ON" : "OFF"}</p>
-              <button className="button" onClick={handleMotorSwitch}>
-                {motorOn ? "Turn Off" : "Turn On"}
-              </button>
-            
+            <h2>Motor Control</h2>
+            <p>Status: {motorOn ? "ON" : "OFF"}</p>
+            <button className="button" onClick={handleMotorSwitch}>
+              {motorOn ? "Turn Off" : "Turn On"}
+            </button>
+
             {/* Toggle Button */}
-            
-              <h2>Feature Control</h2>
-                <p>Feature Toggle:</p>
-                <div className="toggle-switch" onClick={handleToggle}>
-                  <div className={`toggle-thumb ${toggleMessage === "Water Connection" ? "on" : ""}`} />
-                </div>
-                <span className="toggle-message">{toggleMessage}</span>
-              
+            <h2>Feature Control</h2>
+            <p>Feature Toggle:</p>
+            <div className="toggle-switch" onClick={handleToggle}>
+              <div className={`toggle-thumb ${toggleMessage === "Water Connection" ? "on" : ""}`} />
+            </div>
+            <span className="toggle-message">{toggleMessage}</span>
           </div>
-          
-          <div></div>
           <img src={pumpImage} alt="Motor" className="card-image motor-image" />
         </div>
 
@@ -106,12 +175,7 @@ const WaterManagement = () => {
           <button className="button" onClick={handleOutSolenoidSwitch}>
             {outSolenoidOn ? "Turn Off Out Solenoid" : "Turn On Out Solenoid"}
           </button>
-          <div></div>
           <img src={solenoidImage} alt="Solenoid Valve" className="card-image solenoid-image" />
-        </div>
-
-        <div>
-          {/*add somthig this div use for chart arrangement*/}
         </div>
 
         {/* Charts */}
