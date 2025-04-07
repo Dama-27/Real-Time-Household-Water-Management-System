@@ -42,7 +42,7 @@ const WaterManagement = () => {
 
   // Fetch data from Firebase Realtime Database
   useEffect(() => {
-    const temperatureRef = ref(realtimeDB, "Tempurature");
+    const temperatureRef = ref(realtimeDB, "Temperature");
     const tdsRef = ref(realtimeDB, "TDS");
     const waterQualityRef = ref(realtimeDB, "WaterQuality");
     const waterLevelRef = ref(realtimeDB, "WaterLevel");
@@ -175,6 +175,7 @@ const WaterManagement = () => {
           <button className="button" onClick={handleOutSolenoidSwitch}>
             {outSolenoidOn ? "Turn Off Out Solenoid" : "Turn On Out Solenoid"}
           </button>
+          <div></div>
           <img src={solenoidImage} alt="Solenoid Valve" className="card-image solenoid-image" />
         </div>
 

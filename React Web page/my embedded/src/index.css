@@ -38,7 +38,7 @@ body {
 
 .header h1 {
     font-family: TitleFont;
-    font-size: 50px;
+    font-size: 70px;
 }
 
 .logo {
@@ -65,18 +65,29 @@ body {
     padding: 20px;
     text-align: center;
     color: black;
+    background-color: rgba(255, 255, 255, 0.2);
+    /* white with 20% opacity */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    /* frosted glass effect */
+    -webkit-backdrop-filter: blur(5px);
+    color: #fff;
+    /* or any text color that works with your background */
 }
 
 .card h2 {
-    font-size: 20px;
+    font-size: 35px;
     font-weight: bold;
-    color: #242121;
+    color: #000000;
     margin-bottom: 10px;
 }
 
 .card p {
-    font-size: 16px;
-    color: #d5cdcd;
+    font-size: 30px;
+    color: #000000;
     margin: 5px 0;
 }
 
