@@ -1,16 +1,16 @@
-// solenoid.h
-#ifndef SOLENOID_H
-#define SOLENOID_H
+#ifndef SOLENOID_CONTROL_H
+#define SOLENOID_CONTROL_H
 
 #include "driver/gpio.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include <stdio.h>
 
-#define inVALVE_PIN GPIO_NUM_26
-#define outVALVE_PIN GPIO_NUM_27
+// Function to initialize the solenoid pin
+static inline void solenoid_init(gpio_num_t solenoidPin) {
+    gpio_set_direction(solenoidPin, GPIO_MODE_OUTPUT);
+}
 
-void initSolenoid();
-void controlSolenoid(bool state);
+// Function to control the solenoid state
+static inline void setSolenoid(gpio_num_t solenoidPin, bool solenoidState) {
+    gpio_set_level(solenoidPin, solenoidState ? 1 : 0);
+}
 
-#endif // SOLENOID_H
+#endif // SOLENOID_CONTROL_H

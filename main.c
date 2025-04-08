@@ -7,14 +7,19 @@
 #include "solenoid.h"
 #include "ultrasonic.h"
 
+#define TRIGGER_PIN GPIO_NUM_14
+#define ECHO_PIN GPIO_NUM_12
+
 void app_main() {
     gpio_num_t relayPin = GPIO_NUM_5;  // GPIO pin for relay control
+
 
     // Initialize all hardware components
     relay_init(relayPin);
     tds_sensor_init();
     initSolenoid();
     initUltrasonic();
+    ultrasonic_init(TRIGGER_PIN, ECHO_PIN);
 
     while (1) {
         // Read temperature
@@ -26,7 +31,7 @@ void app_main() {
         printf("TDS Value: %.2f ppm\n", tdsValue);
 
         // Read ultrasonic sensor distance
-        float distance = getDistance();
+        float distance = measure_distance();
         printf("Distance: %.2f cm\n", distance);
 
         // Control relay based on temperature
