@@ -29,7 +29,7 @@ float duration, distance;
 float temperature, tdsValue;
 int mode;
 
-bool relay3State = false;
+
 
 void init_pins(void) {
     // Output config
@@ -74,6 +74,7 @@ void init_pins(void) {
     setSolenoid(OUT_SOLENOID_PIN, false); // Outflow closed
 
 }
+bool relay3State = false;
 
 void handleWaterFilling(float distance, gpio_num_t pin) {
     if (distance > MAX_DISTANCE && !relay3State) {
@@ -90,6 +91,7 @@ void handleWaterFilling(float distance, gpio_num_t pin) {
 void app_main() {
     init_pins();
     init_flow_sensors();
+
 
     while(1) {
 
@@ -114,13 +116,15 @@ void app_main() {
         printf("outflow: %.2f \n", output_flow);
         printf("totalin: %.2f \n", total_in);
         printf("totalout: %.2f \n", total_out);
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        
         if (button){
-            handleWaterFilling(distance, RELAY3_PIN);
+            handleWaterFilling(dist, RELAY3_PIN);
         }
         else{
-            handleWaterFilling(distance, IN_SOLENOID_PIN);
+            handleWaterFilling(dist, IN_SOLENOID_PIN);
         }
+
+        vTaskDelay(pdMS_TO_TICKS(500));
         
     }
 }
