@@ -1,0 +1,39 @@
+{
+	"folders": [
+		{
+			"path": "."  // This keeps the workspace directory as the root
+		}
+	],
+	"settings": {
+		"terminal.integrated.profiles.windows": {
+			"ESP-IDF": {
+				"path": "cmd.exe",
+				"args": [
+					"/K",
+					"C:/Espressif/frameworks/esp-idf-v5.4/export.bat"
+				]
+			}
+		},
+		"terminal.integrated.defaultProfile.windows": "ESP-IDF",
+		"idf.espIdfPath": "C:/Espressif/frameworks/esp-idf-v5.4",
+		"idf.pythonBinPath": "C:/Espressif/tools/idf-python/3.11.2/python.exe",
+		"idf.toolsPath": "C:/Espressif/tools",
+		"files.exclude": {
+			"**/.vscode": true,
+			"**/build": true,
+			"**/sdkconfig": true
+		},
+		"C_Cpp.default.compilerPath": "C:/Espressif/tools/xtensa-esp32-elf-gcc/esp-12.2.0/bin/xtensa-esp32-elf-gcc.exe",
+		"C_Cpp.default.intelliSenseMode": "windows-gcc-x86",
+		"C_Cpp.default.configurationProvider": "espressif.esp-idf-extension",
+		"files.associations": {
+			"*.embeddedhtml": "html",
+			"ds18b20.h": "c",
+			"tds_sensor.h": "c",
+			"owb_rmt.h": "c",
+			"temperature_sensor.h": "c",
+			"relay_control.h": "c",
+			"ultrasonic_control.h": "c"
+		}
+	}
+}
