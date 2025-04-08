@@ -22,6 +22,9 @@
 #define IN_SOLENOID_PIN GPIO_NUM_26 // (relay1, outsolen) ->water in from road
 #define OUT_SOLENOID_PIN GPIO_NUM_27
 
+#define MAX_DISTANCE 17
+#define MIN_DISTANCE 5
+
 float duration, distance;
 float temperature, tdsValue;
 int mode;
@@ -72,12 +75,26 @@ void init_pins(void) {
 
 }
 
+void handleWaterFilling(float distance, gpio_num_t pin) {
+    if (distance > MAX_DISTANCE && !relay3State) {
+        setRelay(pin, false);  // Turn ON
+        relay3State = true;
+        printf("Relay turned ON (water filling)\n");
+    } else if (distance <= MIN_DISTANCE && relay3State) {
+        setRelay(pin, true);  // Turn OFF
+        relay3State = false;
+        printf("Relay turned OFF (tank full)\n");
+    }
+}
+
 void app_main() {
     init_pins();
     init_flow_sensors();
 
     while(1) {
 
+        bool button=true;
+        
         float dist = measure_distance(TRIG_PIN, ECHO_PIN);
         float temp = read_temperature();
         float tds = read_tds(temp);
@@ -98,6 +115,12 @@ void app_main() {
         printf("totalin: %.2f \n", total_in);
         printf("totalout: %.2f \n", total_out);
         vTaskDelay(pdMS_TO_TICKS(1000));
-
+        if (button){
+            handleWaterFilling(distance, RELAY3_PIN);
+        }
+        else{
+            handleWaterFilling(distance, IN_SOLENOID_PIN);
+        }
+        
     }
 }
