@@ -1,3 +1,4 @@
-idf_component_register(SRCS "Real-Time-Household-Water-Management-System.c"
-                    INCLUDE_DIRS "."
-                    REQUIRES esp32-ds18b20 temperature_sensor tds_sensor relay_control solenoid_control ultrasonic_control flow_sensor)
+idf_component_register(SRCS "wifi_connect.c" "firebase.c" "Real-Time-Household-Water-Management-System.c" 
+"ultrasonic_control.c" "flow_sensor.c" "relay_control.c" "solenoid_control.c" "temperature_sensor.c" "tds_sensor.c"
+                    INCLUDE_DIRS "." 
+                    EMBED_TXTFILES "firebase_cert.pem")

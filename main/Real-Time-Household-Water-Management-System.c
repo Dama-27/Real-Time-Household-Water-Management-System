@@ -1,14 +1,14 @@
-#include "driver/gpio.h"
+#include "firebase.h"
+#include "wifi_connect.h"  // assuming you already have a wifi_connect module
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "ds18b20.h"
+#include "esp_log.h"
 #include "solenoid_control.h"
 #include "temperature_sensor.h"
 #include "tds_sensor.h"
 #include "relay_control.h"
 #include "ultrasonic_control.h"
 #include "flow_sensor.h"
-
 
 #define RELAY3_PIN GPIO_NUM_14 // Relay 3 Pin (motor)
 #define TRIG_PIN GPIO_NUM_5    // Ultrasonic Sensor Trig Pin
@@ -24,10 +24,6 @@
 
 #define MAX_DISTANCE 17
 #define MIN_DISTANCE 5
-
-float duration, distance;
-float temperature, tdsValue;
-int mode;
 
 
 
@@ -68,13 +64,14 @@ void init_pins(void) {
     // init_flow_sensor(OUT_FLOW_VALVE_PIN); // Flow sensor pin (GPIO_NUM_22)
 
 
-    // Set default states (OFF = HIGH for active-low relays/solenoids)
-    setRelay(RELAY3_PIN, false);          // Motor OFF
-    setSolenoid(IN_SOLENOID_PIN, false);  // Inflow closed
+    // // Set default states (OFF = HIGH for active-low relays/solenoids)
+    setRelay(RELAY3_PIN, true);          // Motor OFF
+    setSolenoid(IN_SOLENOID_PIN, true);  // Inflow closed
     setSolenoid(OUT_SOLENOID_PIN, false); // Outflow closed
 
 }
 bool relay3State = false;
+
 
 void handleWaterFilling(float distance, gpio_num_t pin) {
     if (distance > MAX_DISTANCE && !relay3State) {
@@ -88,20 +85,26 @@ void handleWaterFilling(float distance, gpio_num_t pin) {
     }
 }
 
-void app_main() {
+
+
+void app_main(void) {
+    wifi_connect(); // Connect to Wi-Fi
     init_pins();
     init_flow_sensors();
 
+    // Simulate the input data (you can update these values dynamically if needed)
+    float tankDepth = 21.65;
 
-    while(1) {
+    while (1) {
+        // Send updated data to Firebase
 
-        bool button=true;
-        
         float dist = measure_distance(TRIG_PIN, ECHO_PIN);
+        float water_level = ((tankDepth - dist) / tankDepth) * 100; 
         float temp = read_temperature();
         float tds = read_tds(temp);
-        // float inflow = get_flow_rate_lpm(IN_FLOW_VALVE_PIN); // Flow rate in L/min
-        // float outflow = get_flow_rate_lpm(OUT_FLOW_VALVE_PIN); // Flow rate in L/min
+
+        // Determine water quality based on TDS value
+        const char* water_quality = (tds > 10) ? "bad" : "good";
 
         float input_flow = get_flow_rate_lpm(0);
         float output_flow = get_flow_rate_lpm(1);
@@ -110,21 +113,46 @@ void app_main() {
         float total_out = get_total_litres(1);
 
         printf("Distance: %.2f cm\n", dist);
+        printf("Water level: %.2f \n", water_level);
         printf("Temp: %.2f \n", temp);
         printf("TDS: %.2f \n", tds);
+        printf("Water Quality: %s\n", water_quality);
         printf("Inflow: %.2f \n", input_flow);
-        printf("outflow: %.2f \n", output_flow);
-        printf("totalin: %.2f \n", total_in);
-        printf("totalout: %.2f \n", total_out);
+        printf("Outflow: %.2f \n", output_flow);
+        printf("Total In: %.2f \n", total_in);
+        printf("Total Out: %.2f \n", total_out);
+
+        firebase_send_data(input_flow, output_flow, tds, temp, total_in, total_out, water_level, water_quality);
+       
+        bool mode = firebase_get_button_state("toggleState");
+        bool motor = firebase_get_button_state("MotorSwitch");
         
-        if (button){
+
+        // Print the button state to the ESP32 console
+        ESP_LOGI("MODE", "Button state: %s", mode ? "true" : "false");
+        ESP_LOGI("Motor", "Motor On/Off: %s", motor ? "true" : "false");
+        
+        // if (motor) {
+        //     setRelay(RELAY3_PIN, false);
+        //     printf("Manually Motor ON\n");
+        // } else {
+        //     printf("Auto ON\n");
+        //     if (mode) {
+        //         handleWaterFilling(dist, RELAY3_PIN);
+        //         printf("Motor mode\n");
+        //     } else {
+        //         handleWaterFilling(dist, IN_SOLENOID_PIN);
+        //         printf("Road water mode\n");
+        //     }
+        // }
+
+        if (mode){
             handleWaterFilling(dist, RELAY3_PIN);
         }
         else{
             handleWaterFilling(dist, IN_SOLENOID_PIN);
         }
 
-        vTaskDelay(pdMS_TO_TICKS(500));
-        
+        vTaskDelay(pdMS_TO_TICKS(1000)); // 1 second delay
     }
 }
