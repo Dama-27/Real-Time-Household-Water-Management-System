@@ -38,7 +38,7 @@ const WaterManagement = () => {
   const [outflowData, setOutflowData] = useState([]);
   const [inSolenoidOn, setInSolenoidOn] = useState(false);
   const [outSolenoidOn, setOutSolenoidOn] = useState(false);
-  const [toggleMessage, setToggleMessage] = useState("");
+  const [toggleMessage, setToggleMessage] = useState("Water Connection");
 
   // Fetch data from Firebase Realtime Database
   useEffect(() => {
@@ -108,8 +108,12 @@ const WaterManagement = () => {
   const handleToggle = () => {
     const newMessage = toggleMessage === "Water Connection" ? "Motor Line" : "Water Connection";
     setToggleMessage(newMessage);
-    set(ref(realtimeDB, "toggleState"), newMessage);
+  
+    const toggleValue = newMessage === "Motor Line"; // true if "Motor Line", false otherwise
+
+    set(ref(realtimeDB, "toggleState"), toggleValue);
   };
+  
 
   // Log data every 5 seconds for charts
   useEffect(() => {
